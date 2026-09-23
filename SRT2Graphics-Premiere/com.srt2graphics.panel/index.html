@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+<meta charset="utf-8">
+<title>SRT2Graphics</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="hdr">
+  <div class="brand">
+    <div class="logo-mark">
+      <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2.5" y="4" width="19" height="16" rx="3"/>
+        <path d="M7 14.5h6.5"/><path d="M7 11h10"/>
+      </svg>
+    </div>
+    <div class="brand-txt">
+      <div class="logo">SRT<span>2</span>Graphics <span class="chip ver">v2.5</span></div>
+      <div class="tagline">زیرنویس ← لایه‌های گرافیکی پریمیر</div>
+    </div>
+  </div>
+  <div id="connState" class="conn off">در حال اتصال…</div>
+</header>
+
+<main class="wrap">
+
+  <!-- 1: Template -->
+  <section class="card">
+    <h2>
+      <span class="ic"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg></span>
+      قالب گرافیکی
+      <span class="chip en">MOGRT</span>
+      <span class="step">۱</span>
+    </h2>
+    <p class="hint">
+      استایل همه‌ی زیرنویس‌ها (فونت، رنگ، محل) از این قالب گرفته می‌شود.
+      اگر قالب ندارید <button id="btnGuide" class="linklike">راهنمای ساخت قالب</button> را ببینید — فقط یک بار، حدود ۱ دقیقه.
+    </p>
+    <div class="row">
+      <button id="btnPickMogrt" class="btn sel">
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+        انتخاب فایل قالب
+      </button>
+      <button id="btnTestMogrt" class="btn ghost" title="یک کلیپ نمونه در محل پلی‌هد می‌سازد تا مطمئن شوید قالب درست کار می‌کند">
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+        تست قالب
+      </button>
+    </div>
+    <div id="mogrtPath" class="path empty">قالبی انتخاب نشده است</div>
+  </section>
+
+  <!-- 2: Source -->
+  <section class="card">
+    <h2>
+      <span class="ic"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4" width="19" height="16" rx="3"/><path d="M7 14.5h6.5"/><path d="M7 11h10"/></svg></span>
+      منبع زیرنویس
+      <span class="step">۲</span>
+    </h2>
+    <div class="row">
+      <button id="btnFromClip" class="btn">
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 12h8"/><path d="M12 8v8"/></svg>
+        از کلیپ تایم‌لاین
+      </button>
+      <button id="btnBrowseSrt" class="btn ghost">
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+        انتخاب فایل SRT…
+      </button>
+    </div>
+    <div id="srtState" class="path empty">هنوز فایلی خوانده نشده</div>
+    <label class="switch">
+      <input type="checkbox" id="optPlayhead">
+      <span class="track"><span class="knob"></span></span>
+      <span class="sw-txt">شروع از محل پلی‌هد <small>(حالت انتخاب فایل)</small></span>
+    </label>
+  </section>
+
+  <!-- 3: Style -->
+  <section class="card">
+    <h2>
+      <span class="ic"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20 10.5 4h3L20 20"/><path d="M6.8 14h10.4"/></svg></span>
+      استایل (اختیاری)
+      <span class="step">۳</span>
+    </h2>
+    <p class="hint">اگر خالی بمانند، استایل از قالب استفاده می‌شود. تغییر فونت فقط وقتی اعمال می‌شود که کنترل فونت در قالب فعال شده باشد.</p>
+    <div class="grid2">
+      <div>
+        <label class="lbl" for="inpFont">فونت</label>
+        <input id="inpFont" type="text" list="fontList" placeholder="مثلاً Vazirmatn">
+        <datalist id="fontList">
+          <option value="Vazirmatn"></option>
+          <option value="IRANSansX"></option>
+          <option value="IRANSans"></option>
+          <option value="Shabnam"></option>
+          <option value="Sahel"></option>
+          <option value="Estedad"></option>
+          <option value="BYekan"></option>
+          <option value="Tahoma"></option>
+        </datalist>
+      </div>
+      <div>
+        <label class="lbl" for="inpSize">اندازه (px)</label>
+        <input id="inpSize" type="number" min="4" max="400" placeholder="خودکار">
+      </div>
+    </div>
+  </section>
+
+  <!-- 4: Destination -->
+  <section class="card">
+    <h2>
+      <span class="ic"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 10 5.5-10 5.5L2 7.5z"/><path d="m2 12.5 10 5.5 10-5.5"/><path d="m2 17.5 10 5.5 10-5.5"/></svg></span>
+      مقصد
+      <span class="step">۴</span>
+    </h2>
+    <label class="switch">
+      <input type="checkbox" id="optClear" checked>
+      <span class="track"><span class="knob"></span></span>
+      <span class="sw-txt">پاک‌سازی ترک مقصد قبل از تبدیل <small>(برای اجرای مجدد)</small></span>
+    </label>
+    <p class="hint">لایه‌ها روی اولین ترک ویدیوییِ خالیِ زیر کلیپ زیرنویس قرار می‌گیرند.</p>
+    <div class="grid2 wide">
+      <div>
+        <label class="lbl" for="selEngine">موتور تبدیل (v2.0)</label>
+        <select id="selEngine">
+          <option value="auto">خودکار — بیکری + پشتیبان (پیش‌فرض)</option>
+          <option value="bake">بیکری — کاشت متن داخل قالب</option>
+          <option value="value">نوشتن مستقیم (setValue — نسخه ۱٫۵)</option>
+        </select>
+      </div>
+      <div>
+        <label class="lbl" for="selWriteMode">حالت نوشتن متن (فقط موتور setValue)</label>
+        <select id="selWriteMode">
+          <option value="uni">۱ — یونیکد + سند ASCII (پیش‌فرض)</option>
+          <option value="bytes">۲ — بایتی (نسخه ۱٫۴)</option>
+          <option value="raw">۳ — یونیکد + متن خام</option>
+          <option value="noprefix">۴ — سند بدون پیشوند</option>
+        </select>
+      </div>
+    </div>
+    <div class="grid2 wide">
+      <div>
+        <label class="lbl" for="selPace">مکث بین لایه‌ها (ضد کرش — هوشمند از v2.2)</label>
+        <select id="selPace">
+          <option value="0">بدون مکث — سریع اما پرریسک</option>
+          <option value="1000">۱ ثانیه</option>
+          <option value="2000">۲ ثانیه</option>
+          <option value="3000" selected>۳ ثانیه — پیشنهادی</option>
+          <option value="5000">۵ ثانیه — بسیار امن</option>
+          <option value="8000">۸ ثانیه</option>
+          <option value="10000">۱۰ ثانیه — پروژه‌های سنگین</option>
+        </select>
+      </div>
+      <div>
+        <label class="lbl">زمان تقریبی تبدیل</label>
+        <div id="paceEst" class="pace-est">بعد از بارگذاری SRT محاسبه می‌شود</div>
+      </div>
+    </div>
+    <div class="grid2 wide">
+      <div>
+        <label class="lbl" for="inpResume">ادامه از لایه (پس از کرش — اختیاری)</label>
+        <input id="inpResume" type="number" min="1" placeholder="از اول (خالی = از لایه ۱)">
+      </div>
+      <div>
+        <label class="lbl">اگر پریمیر وسط کار کرش کرد؟</label>
+        <div class="pace-est">پریمیر را باز کنید، همین SRT و قالب را انتخاب کنید و در کادر روبه‌رو «آخرین لایه‌ی سالم + ۱» را بنویسید (لایه‌های ذخیره‌شده هر ۱۰ تاست — بهترین نقطه: مضرب ۱۰ + ۱). پنل هم شماره‌ی پیشنهادی را در گزارش نشان می‌دهد.</div>
+      </div>
+    </div>
+    <p class="hint"><b>بدون پیغام حین تبدیل (همیشه فعال):</b> بعد از قرارگیری هر لایه زیرنویس هیچ پیغامی به شما نشان داده نمی‌شود — فقط نوار پیشرفت به‌روز می‌شود؛ خطاها و گزارش پایانی همیشه نمایش داده می‌شوند.</p>
+    <p class="hint">موتور بیکری متن فارسی را <b>مستقیم داخل فایل قالب</b> کاشته می‌کند و پریمیر آن را مثل یک قالب عادی باز می‌کند — متن هیچ‌وقت از پل اسکریپت رد نمی‌شود، پس دیگه خراب نمی‌شود و محدودیت طول متن هم ندارد. حالت نوشتن فقط وقتی به کار می‌آید که موتور روی «نوشتن مستقیم» باشد.</p>
+    <p class="hint">نکته‌ی v2.4 — ریشه‌یابی کرش: پریمیر هنگام ایمپورت قالب دومِ بیکری به‌خاطر «هویت‌های تکراری اشیاء» داخل فایل‌های قالب کرش می‌کرد (مکث هم جلویش را نمی‌گرفت). حالا هر فایل بیکری هویت‌های یکتای خودش را دارد؛ جمع‌کردن حافظه بین لایه‌ها هم کاملاً حذف شد (خودش عامل ناپایداری بود) و اگر باز هم جایی کرش شد، با «ادامه از لایه» از همان‌جا ادامه می‌دهید — بدون ساختن مجدد لایه‌های قبلی.</p>
+    <p class="hint">نکته‌ی v2.3 — سبک‌سازی رم: متن‌های تکراری فقط یک‌بار ایمپورت می‌شوند و برای بقیه از همان قالب مشترک کپی می‌شود (در دیالوگ‌ها تا ۳۰٪ ایمپورت کمتر)، پروژه هر ۱۰ لایه یک‌بار به‌صورت امن ذخیره می‌شود (اگر کرش شد، کار ساخته‌شده از دست نمی‌رود). اگر پریمیر همچنان کرش کرد: Preferences → Memory را روی بهینه‌سازی برای Memory بگذارید و Media Cache را پاک کنید.</p>
+    <p class="hint">نکته‌ی v2.2 — ضدکرش کامل: ذخیره‌سازی خودکار پریمیر در طول تبدیل موقتاً خاموش می‌شود، پروژه قبل از شروع ذخیره می‌شود، مکث بین لایه‌ها هوشمند است (اگر لایه‌ای ناموفق شود خودکار بیشتر می‌شود) و در موتور نوشتن مستقیم، قالب فقط یک‌بار ایمپورت می‌شود. فایل‌های بیکری در Documents\SRT2Graphics\Baked ذخیره می‌شوند — تا وقتی پروژه باز است پاک‌شان نکنید.</p>
+  </section>
+
+  <!-- Convert -->
+  <button id="btnConvert" class="convert" disabled>
+    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4.5 13.5H11l-1 8.5L19.5 10H13z"/></svg>
+    تبدیل به لایه‌های گرافیکی
+  </button>
+
+  <div id="progressBox" class="progress-box hidden">
+    <div class="progress-head">
+      <div id="progressText" class="progress-text">۰٪</div>
+      <button id="btnAbort" class="abort hidden">لغو</button>
+    </div>
+    <div class="progress-track"><div id="progressBar" class="progress-fill"></div></div>
+  </div>
+
+  <section class="card log-card">
+    <h2>
+      <span class="ic"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 8 4 4-4 4"/><path d="M12 17h7"/></svg></span>
+      گزارش
+    </h2>
+    <div id="log" class="log">آماده.</div>
+  </section>
+
+</main>
+
+<!-- Guide modal -->
+<div id="modal" class="modal hidden">
+  <div class="modal-box">
+    <h2>ساخت قالب گرافیکی در ۴ قدم <small>(یک‌بار برای همیشه)</small></h2>
+    <ol class="guide">
+      <li>در پریمیر، بالای فریم اول یک <b>متن جدید</b> بسازید (ابزار <span class="en">Type</span> یا دکمه‌ی T) و برای متن نمونه، <b>یک خط بلند (حدوداً ۲۵۵ کاراکتر)</b> تایپ کنید — چندین بار کلمه‌ی «زیرنویس» را کپی کنید تا خط پر شود. <b>مهم:</b> پریمیر طول متن قالب را سقف ظرفیت همه‌ی زیرنویس‌های بعدی می‌گیرد؛ متن نمونه‌ی کوتاه = زیرنویس‌های بلندتر پاک می‌شوند.</li>
+      <li>از پنل <b>Essential Graphics</b> فونت، اندازه، رنگ، سایه و محل متن را دقیقاً مثل یک زیرنویس واقعی تنظیم کنید. سطر متن را <b>پایین و وسط</b> کادر بگذارید.</li>
+      <li>در همان پنل، منوی همبرگری ← <b>Export Motion Graphics Template</b> را بزنید؛ نام دلخواه بدهید و مسیر ذخیره را <b>روی دیسک</b> (مثلاً دسکتاپ) انتخاب کنید تا فایل <span class="en">.mogrt</span> ساخته شود.</li>
+      <li>در همین پنل دکمه‌ی «انتخاب فایل قالب» را بزنید و همان فایل را انتخاب کنید؛ سپس با دکمه‌ی <b>«تست قالب»</b> صحت آن را بررسی کنید. تمام!</li>
+    </ol>
+    <p class="hint">نکته: قالب فقط باید <b>یک لایه‌ی متن</b> داشته باشد. اگر قالب را عوض کنید، همه‌ی تبدیل‌های بعدی با استایل جدید انجام می‌شود.</p>
+    <p class="hint">نکته‌ی v1.5: دکمه‌ی «تست قالب» حالا <b>۶ کلیپ آزمایشی</b> می‌سازد — گزارش پارامترها + چهار کلیپ شوترا («۱ یونیکد + سند ASCII»، «۲ بایتی»، «۳ یونیکد + متن خام»، «۴ سند بدون پیشوند») + <b>کلیپ ۶ «بیکری»</b> که متنش از قبل داخل قالب کاشته شده. اگر فقط «بیکری» متن فارسی سالم نشان داد، همان موتور پیش‌فرض است و کارتان تمام است — حالت نوشتن لازم نیست.</p>
+    <p class="hint">نکته: اگر «تست قالب» خط‌های <span class="en">n=[hex]</span> نشان داد، آن‌ها تصویر واقعی بایت‌های برگشتی از پریمیرند — اگر هیچ حالتی جواب نداد، همین خط‌ها را گزارش کنید.</p>
+    <button id="btnCloseModal" class="btn ok-btn">فهمیدم</button>
+  </div>
+</div>
+
+<script src="js/CSInterface.js"></script>
+<script src="js/mogrtbaker.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
