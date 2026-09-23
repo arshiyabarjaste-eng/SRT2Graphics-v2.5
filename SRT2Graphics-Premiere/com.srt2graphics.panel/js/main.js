@@ -47,7 +47,7 @@ function parseSrt(content) {
     // also handle index line BEFORE timing line (normal case) — already skipped via block split
     var text = textLines.join('\n')
       .replace(/<[^>]+>/g, '')      // strip tags like <i>, <font ...>
-      .replace(/\{\[^}]*\}/g, '')   // strip ASS-style override tags {\...}
+      .replace(/\{[^}]*\}/g, '')    // strip ASS-style override tags {\...} (v2.5 fix: regex required a literal '[' — {\an8} etc. passed through to the graphic)
       .trim();
     if (!text) { warnings.push('SKIP-EMPTYTEXT'); continue; }
     if (endMs <= startMs) { warnings.push('SKIP-BADTIME'); continue; }
@@ -399,7 +399,10 @@ function parseSrt(content) {
         }
         cueMap.push(byKey[k]);
       }
+      var doneCalled = false; // v2.5b: bake callback must reach convertStart exactly once
       var done = function (res) {
+        if (doneCalled) { return; }
+        doneCalled = true;
         if (res && res.ok) { res.cueMap = cueMap; res.uniqueN = list.length; }
         cb(res);
       };
@@ -445,9 +448,16 @@ function parseSrt(content) {
       var c = state.cues[i];
       var it = items[(cueMap && cueMap[i] !== undefined) ? cueMap[i] : i];
       if (!it) { continue; }
+      // v2.5b FIX (found in testing): emit THIS cue's own ticks — the shared
+      // baked file is deduped per unique text, but its stored startTicks belong
+      // to the FIRST occurrence. Reusing it.startTicks placed every repeated
+      // line of dialogue at the first occurrence's time instead of its own.
+      // Path stays deduped (RAM optimization intact); timing is now per cue.
+      var sTicks = c.startMs * TICKS_PER_MS + state.anchorTicks;
+      var eTicks = c.endMs * TICKS_PER_MS + state.anchorTicks;
       // v2.3: 4th field = text hash (ASCII hex) — drives the import dedupe
       var h = textHash(c.text);
-      lines.push(it.startTicks + '\t' + it.endTicks + '\t' + encodeURIComponent(it.path) + (h ? ('\t' + h) : ''));
+      lines.push(sTicks + '\t' + eTicks + '\t' + encodeURIComponent(it.path) + (h ? ('\t' + h) : ''));
     }
     return encodeURIComponent(lines.join('\n'));
   }

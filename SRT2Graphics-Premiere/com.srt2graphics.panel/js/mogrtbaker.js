@@ -635,22 +635,32 @@
     var oldTextSeen = '';
     var i = 0;
     var CHUNK = 15;
+    // v2.5b: single-delivery guard — the consumer's callback must fire EXACTLY
+    // once. Field case (caught in testing): if the consumer's callback throws,
+    // the catch below re-invoked cb with a confusing error and the panel could
+    // start the conversion twice. All paths now funnel through finish().
+    var delivered = false;
+    function finish(res) {
+      if (delivered) { return; }
+      delivered = true;
+      cb(res);
+    }
     function step() {
       try {
       var end = Math.min(i + CHUNK, cues.length);
       for (; i < end; i++) {
         var res = bakeFromBuffer(tpl, cues[i].text, cues[i].label);
-        if (!res.ok) { cb({ ok: false, error: res.error, dir: dir, bakedSoFar: items.length }); return; }
+        if (!res.ok) { finish({ ok: false, error: res.error, dir: dir, bakedSoFar: items.length }); return; }
         oldTextSeen = res.oldText;
         var p = _path.join(dir, 'baked_' + ('0000' + i).slice(-4) + '.mogrt');
         try { _fs.writeFileSync(p, res.buffer); }
-        catch (eW) { cb({ ok: false, error: 'E_WRITE: ' + String(eW && eW.message || eW), dir: dir, bakedSoFar: items.length }); return; }
+        catch (eW) { finish({ ok: false, error: 'E_WRITE: ' + String(eW && eW.message || eW), dir: dir, bakedSoFar: items.length }); return; }
         items.push({ path: p, startTicks: cues[i].startTicks, endTicks: cues[i].endTicks });
       }
       if (typeof onProgress === 'function') { try { onProgress({ done: items.length, total: cues.length }); } catch (eP) {} }
       if (i < cues.length) { setTimeout(step, 0); }
-      else { cb({ ok: true, dir: dir, items: items, oldText: oldTextSeen }); }
-      } catch (eB) { cb({ ok: false, error: String(eB && eB.message || eB) }); }
+      else { finish({ ok: true, dir: dir, items: items, oldText: oldTextSeen }); }
+      } catch (eB) { finish({ ok: false, error: String(eB && eB.message || eB) }); }
     }
     step();
   }
